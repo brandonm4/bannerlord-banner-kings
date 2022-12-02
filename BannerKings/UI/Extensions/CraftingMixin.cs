@@ -306,7 +306,7 @@ namespace BannerKings.UI.Extensions
 
         private float GetSpentHours()
         {
-            return spentStamina / 6f;
+            return spentStamina / 12f;
         }
 
         public void UpdateMaterials()

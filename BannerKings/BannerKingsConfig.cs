@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using BannerKings.Managers;
 using BannerKings.Managers.AI;
 using BannerKings.Managers.Court;
@@ -17,6 +18,7 @@ using BannerKings.Managers.Titles;
 using BannerKings.Managers.Titles.Laws;
 using BannerKings.Models.BKModels;
 using BannerKings.Models.Vanilla;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -25,6 +27,10 @@ namespace BannerKings
 {
     public class BannerKingsConfig
     {
+        static BannerKingsConfig()
+        {
+            ConfigHolder.CONFIG = new();
+        }
         public bool FirstUse { get; private set; } = true;
 
         public AIBehavior AI = new();
@@ -91,6 +97,7 @@ namespace BannerKings
                     EducationManager.InitHeroEducation(hero);
                 }
             }
+
 
             FirstUse = false;
         }

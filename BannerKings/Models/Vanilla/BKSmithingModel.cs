@@ -14,7 +14,7 @@ namespace BannerKings.Models.Vanilla
     {
         public ExplainedNumber GetSmithingHourlyPrice(Settlement settlement, Hero hero)
         {
-            var result = new ExplainedNumber(50f, true);
+            var result = new ExplainedNumber(10f, true);
 
             var prosperity = settlement.Prosperity / 5000f;
             if (prosperity >= 1f)
@@ -297,7 +297,7 @@ namespace BannerKings.Models.Vanilla
                 };
             }
 
-            return MBMath.ClampInt(result, 15, max);
+            return MBMath.ClampInt(result, 5, max);
         }
 
         public override int GetEnergyCostForSmelting(ItemObject item, Hero hero)
