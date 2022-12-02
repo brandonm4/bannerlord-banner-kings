@@ -10,41 +10,49 @@ namespace BannerKings.Models.Vanilla
     {
         public override int PrisonerRansomValue(CharacterObject prisoner, Hero sellerHero = null)
         {
-            var result = base.PrisonerRansomValue(prisoner, sellerHero);
-            if (sellerHero != null)
+            try
             {
-                var settlement = sellerHero.CurrentSettlement;
-                if (settlement != null && BannerKingsConfig.Instance.PopulationManager.IsSettlementPopulated(settlement) && !prisoner.IsHero)
+                var result = base.PrisonerRansomValue(prisoner, sellerHero);
+                if (sellerHero != null)
                 {
-                    var crime =((BKCriminalPolicy) BannerKingsConfig.Instance.PolicyManager.GetPolicy(settlement, "criminal"))
-                        .Policy;
-                    if (crime == CriminalPolicy.Enslavement)
+                    var settlement = sellerHero.CurrentSettlement;
+                    if (settlement != null && BannerKingsConfig.Instance.PopulationManager.IsSettlementPopulated(settlement) && !prisoner.IsHero)
                     {
-                        result = (int)BannerKingsConfig.Instance.GrowthModel.CalculateSlavePrice(settlement).ResultNumber;
+                        var crime = ((BKCriminalPolicy)BannerKingsConfig.Instance.PolicyManager.GetPolicy(settlement, "criminal"))
+                            .Policy;
+                        if (crime == CriminalPolicy.Enslavement)
+                        {
+                            result = (int)BannerKingsConfig.Instance.GrowthModel.CalculateSlavePrice(settlement).ResultNumber;
+                        }
+                        else
+                        {
+                            result = (int)(result * 0.5f);
+                        }
                     }
-                    else
+
+
+                    var education = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(sellerHero);
+                    if (prisoner.IsHero && education.HasPerk(BKPerks.Instance.OutlawKidnapper))
                     {
-                        result = (int)(result * 0.5f);
+                        result += (int)(result * 0.3f);
                     }
                 }
 
-
-                var education = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(sellerHero);
-                if (prisoner.IsHero && education.HasPerk(BKPerks.Instance.OutlawKidnapper))
+                if (prisoner.IsHero)
                 {
-                    result += (int) (result * 0.3f);
+                    if (prisoner.HeroObject.CompanionOf != null)
+                    {
+                        result = (int)(result * 0.3f);
+                    }
                 }
+
+                return result;
             }
-
-            if (prisoner.IsHero)
+            catch
             {
-                if (prisoner.HeroObject.CompanionOf != null)
-                {
-                    result = (int)(result * 0.3f);
-                }
-            }
 
-            return result;
-        }
+            }
+            return base.PrisonerRansomValue(prisoner, sellerHero);
+        }        
     }
 }

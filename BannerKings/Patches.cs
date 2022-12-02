@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using BannerKings.Extensions;
 using BannerKings.Managers.Helpers;
 using BannerKings.Managers.Skills;
+
 using HarmonyLib;
+
 using Helpers;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
@@ -29,6 +33,7 @@ using TaleWorlds.GauntletUI.GamepadNavigation;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
+
 using static BannerKings.Managers.PopulationManager;
 using static TaleWorlds.CampaignSystem.Election.KingSelectionKingdomDecision;
 using static TaleWorlds.CampaignSystem.Issues.CaravanAmbushIssueBehavior;
@@ -64,7 +69,7 @@ namespace BannerKings.Patches
             [HarmonyPatch("UpdateVolunteersOfNotablesInSettlement", MethodType.Normal)]
             private static bool UpdateVolunteersPrefix(Settlement settlement)
             {
-                if ((settlement.Town != null && !settlement.Town.InRebelliousState && settlement.Notables != null) || 
+                if ((settlement.Town != null && !settlement.Town.InRebelliousState && settlement.Notables != null) ||
                     (settlement.IsVillage && !settlement.Village.Bound.Town.InRebelliousState))
                 {
                     var data = BannerKingsConfig.Instance.PopulationManager.GetPopData(settlement);
@@ -256,11 +261,19 @@ namespace BannerKings.Patches
                 {
                     return;
                 }
-
-                var education = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(leader);
-                if (education.HasPerk(BKPerks.Instance.MercenaryRansacker))
+                try
                 {
-                    __result = (int)(__result * 1.1f);
+                    var education = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(leader);
+                    if (education.HasPerk(BKPerks.Instance.MercenaryRansacker) &&
+                        MBRandom.RandomFloat < 0.1f)
+                    {
+                        var contribution = __instance.ContributionToBattle;
+                        AccessTools.Field(__instance.GetType(), "_contributionToBattle").SetValue(__instance, contribution + 1);
+                    }
+                }
+                catch (Exception ex)
+                {
+
                 }
             }
         }
@@ -499,7 +512,7 @@ namespace BannerKings.Patches
                 if (title != null)
                 {
                     var deJure = title.deJure;
-                    var king = ((KingSelectionDecisionOutcome) chosenOutcome).King;
+                    var king = ((KingSelectionDecisionOutcome)chosenOutcome).King;
                     if (deJure != king)
                     {
                         BannerKingsConfig.Instance.TitleManager.InheritTitle(deJure, king, title);
