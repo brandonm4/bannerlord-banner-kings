@@ -142,19 +142,23 @@ namespace BannerKings.Behaviours
         {
             foreach (var mapEventParty in mapEvent.AttackerSide.Parties)
             {
-                if (mapEventParty.Party.IsActive)
+                try
                 {
-                    var mobileParty = mapEventParty.Party.MobileParty;
-                    if (mobileParty != null && mobileParty.LeaderHero != null && 
-                        mapEvent.MapEventSettlement.Culture.StringId != "battania")
+                    if (mapEventParty.Party.IsActive)
                     {
-                        if (BannerKingsConfig.Instance.ReligionsManager.HasBlessing(mobileParty.LeaderHero,
-                            DefaultDivinities.Instance.AmraSecondary2))
+                        var mobileParty = mapEventParty.Party.MobileParty;
+                        if (mobileParty != null && mobileParty.LeaderHero != null &&
+                            mapEvent.MapEventSettlement.Culture.StringId != "battania")
                         {
-                            GainRenownAction.Apply(mobileParty.LeaderHero, 10f);
+                            if (BannerKingsConfig.Instance.ReligionsManager.HasBlessing(mobileParty.LeaderHero,
+                                DefaultDivinities.Instance.AmraSecondary2))
+                            {
+                                GainRenownAction.Apply(mobileParty.LeaderHero, 10f);
+                            }
                         }
                     }
                 }
+                catch { }
             }
         }
 

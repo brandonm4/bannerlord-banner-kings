@@ -14,26 +14,30 @@ namespace BannerKings.Models.Vanilla
             PartyBase struckParty, float strikerAdvantage, MapEvent battle)
         {
             var result = base.SimulateHit(strikerTroop, struckTroop, strikerParty, struckParty, strikerAdvantage, battle);
-            var leader = strikerParty.LeaderHero;
-            if (leader != null)
+            try
             {
-                var data = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(leader);
-                if (data.HasPerk(BKPerks.Instance.SiegePlanner) && strikerParty.SiegeEvent != null &&
-                    strikerTroop.IsInfantry && strikerTroop.IsRanged)
+                var leader = strikerParty.LeaderHero;
+                if (leader != null)
                 {
-                    result = (int) (result * 1.15f);
-                }
-
-                if (BannerKingsConfig.Instance.ReligionsManager.HasBlessing(leader, DefaultDivinities.Instance.AmraSecondary1))
-                {
-                    var faceTerrainType = Campaign.Current.MapSceneWrapper
-                                                  .GetFaceTerrainType(strikerParty.MobileParty.CurrentNavigationFace);
-                    if (faceTerrainType == TerrainType.Forest)
+                    var data = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(leader);
+                    if (data.HasPerk(BKPerks.Instance.SiegePlanner) && strikerParty.SiegeEvent != null &&
+                        strikerTroop.IsInfantry && strikerTroop.IsRanged)
                     {
-                        result = (int)(result * 1.08f);
+                        result = (int)(result * 1.15f);
+                    }
+
+                    if (BannerKingsConfig.Instance.ReligionsManager.HasBlessing(leader, DefaultDivinities.Instance.AmraSecondary1))
+                    {
+                        var faceTerrainType = Campaign.Current.MapSceneWrapper
+                                                      .GetFaceTerrainType(strikerParty.MobileParty.CurrentNavigationFace);
+                        if (faceTerrainType == TerrainType.Forest)
+                        {
+                            result = (int)(result * 1.08f);
+                        }
                     }
                 }
             }
+            catch { }
 
             return result;
         }
