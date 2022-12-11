@@ -27,10 +27,6 @@ namespace BannerKings
 {
     public class BannerKingsConfig
     {
-        static BannerKingsConfig()
-        {
-            ConfigHolder.CONFIG = new();
-        }
         public bool FirstUse { get; private set; } = true;
 
         public AIBehavior AI = new();
@@ -68,7 +64,12 @@ namespace BannerKings
         public BKProsperityModel ProsperityModel { get; } = new();
         public BKTaxModel TaxModel { get; } = new();
         public BKEstatesModel EstatesModel { get; } = new();
-        public BKMarriageModel MarriageModel { get; } = new();        
+        public BKMarriageModel MarriageModel { get; } = new();
+
+        static BannerKingsConfig()
+        {
+            ConfigHolder.CONFIG = new();
+        }
 
         public static BannerKingsConfig Instance => ConfigHolder.CONFIG;
 
@@ -92,7 +93,6 @@ namespace BannerKings
                     EducationManager.InitHeroEducation(hero);
                 }
             }
-
 
             FirstUse = false;
         }
