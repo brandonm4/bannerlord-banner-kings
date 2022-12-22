@@ -22,6 +22,7 @@ namespace BannerKings.Utils
                     .SetTextVariable("CLASS", className)
                     .ToString(),
                     ex);
+                File.AppendAllText(path + fileName, Environment.NewLine + exception.Message + Environment.NewLine + ex.Message);
                 File.AppendAllText(path + fileName, Environment.NewLine + exception.Message + Environment.NewLine + ex.StackTrace);
                 //if (notifty)
                 //{
@@ -31,6 +32,11 @@ namespace BannerKings.Utils
                 //    .ToString()));
                 //}
             }
+        }
+
+        public static void WriteTrace(string message)
+        {
+            File.AppendAllText(path + fileName, $"TRACE: {message}");
         }
     }
 }

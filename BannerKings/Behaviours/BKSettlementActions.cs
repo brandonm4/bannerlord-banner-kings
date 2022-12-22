@@ -7,6 +7,8 @@ using BannerKings.Managers.Skills;
 using BannerKings.UI;
 using BannerKings.Utils;
 
+using Newtonsoft.Json;
+
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.Encounters;
@@ -777,10 +779,15 @@ namespace BannerKings.Behaviours
             ExceptionUtils.TryCatch(() =>
             {
                 args.optionLeaveType = GameMenuOption.LeaveType.RansomAndBribe;
+                ExceptionUtils.WriteTrace("args");
+
                 if (Settlement.CurrentSettlement != null)
+
+                    ExceptionUtils.WriteTrace(Settlement.CurrentSettlement.Name.ToString());
                 {
                     var settlement = Settlement.CurrentSettlement;
                     var data = BannerKingsConfig.Instance.PopulationManager.GetPopData(settlement);
+                    ExceptionUtils.WriteTrace("data");
                     result = data.EstateData != null;
                 }
             }, "MenuEstatesManageCondition");                                    
