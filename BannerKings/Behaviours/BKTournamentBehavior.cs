@@ -30,14 +30,12 @@ namespace BannerKings.Behaviours
         }
 
         private void OnTournamentFinished(CharacterObject winner, MBReadOnlyList<CharacterObject> participants, Town town,
-            ItemObject prize)
+             ItemObject prize)
         {
             if (BannerKingsConfig.Instance.PopulationManager == null)
             {
                 return;
             }
-            try
-            {
 
             ExceptionUtils.TryCatch(() =>
             {
@@ -106,7 +104,6 @@ namespace BannerKings.Behaviours
             },
             GetType().Name);
         }
-
     }
 
     namespace Patches
