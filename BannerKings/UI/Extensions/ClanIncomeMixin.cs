@@ -41,9 +41,9 @@ namespace BannerKings.UI.Extensions
                 viewModel.CurrentSelectedIncome.RefreshValues();
                 var workshop = viewModel.CurrentSelectedIncome.Workshop;
                 var time = CampaignTime.Now - CampaignTime.Days(workshop.NotRunnedDays);
-                WorkshopInfo.Add(new InformationElement(new TextObject("{=OXes1FKN}Last run:").ToString(),
-                    time.ToString(),
-                    new TextObject("{=a2FbzfvH}The last day this workshop has successfully run without issues.").ToString()));
+                //WorkshopInfo.Add(new InformationElement(new TextObject("{=OXes1FKN}Last run:").ToString(),
+                //    time.ToString(),
+                //    new TextObject("{=a2FbzfvH}The last day this workshop has successfully run without issues.").ToString()));
 
                 CanUpgrade = workshop.CanBeUpgraded;
                 TextObject state = new TextObject("{=Bom9FTfz}Running normally.");
@@ -62,11 +62,11 @@ namespace BannerKings.UI.Extensions
                         if (data.IsRunningOnInventory)
                         {
                             inventory = true;
-                            state = new TextObject("{=!}Workshop is running on inventory!");
+                            state = new TextObject("{=VX9LJJpS}Workshop is running on inventory!");
                         }
 
                         WorkshopInfo.Add(new InformationElement(GameTexts.FindText("str_inventory").ToString() + ':',
-                            new TextObject("{=!}{NUMBER} / {CAPACITY}")
+                            new TextObject("{=8YCJrv0F}{NUMBER} / {CAPACITY}")
                             .SetTextVariable("NUMBER", data.GetInventoryCount())
                             .SetTextVariable("CAPACITY", data.GetInventoryCapacity())
                             .ToString(),

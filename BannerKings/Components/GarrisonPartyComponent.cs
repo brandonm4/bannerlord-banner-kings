@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
@@ -11,7 +11,7 @@ namespace BannerKings.Components
 {
     public class GarrisonPartyComponent : BannerKingsComponent
     {
-        public GarrisonPartyComponent(MobileParty target, Settlement origin) : base(origin, "{=!}Garrison from {ORIGIN}")
+        public GarrisonPartyComponent(MobileParty target, Settlement origin) : base(origin, "{=YfLY43hV}Garrison from {ORIGIN}")
         {
             TargetParty = target;
             HoursPatrolled = 0;
@@ -60,6 +60,7 @@ namespace BannerKings.Components
                 garrisonRoster.AddToCounts(element.Character, -1);
             }
 
+            patrol.Party.Visuals.OnStartup(patrol.Party);
             patrol.InitializeMobilePartyAtPosition(members, new TroopRoster(patrol.Party), origin.GatePosition);
             return patrol;
         }

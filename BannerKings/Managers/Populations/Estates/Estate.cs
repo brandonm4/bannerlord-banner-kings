@@ -1,6 +1,9 @@
 using BannerKings.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
@@ -25,33 +28,39 @@ namespace BannerKings.Managers.Populations.Estates
 
         public static Estate CreateNotableEstate(Hero notable, PopulationData data, EstateData estateData= null)
         {
-            if (data == null || data.LandData == null)
+            try
+            {
+                if (data == null || data.LandData == null)
+                {
+                    return null;
+                }
+
+                float acreage = data.LandData.Acreage;
+                float acres = MBRandom.RandomFloatRanged(BannerKingsConfig.Instance.EstatesModel.MinimumEstateAcreage,
+                    BannerKingsConfig.Instance.EstatesModel.MaximumEstateAcreagePercentage * acreage);
+                var composition = data.LandData.Composition;
+                float farmland = acres * composition[0];
+                float pastureland = acres * composition[1];
+                float woodland = acres * composition[2];
+
+                float totalSerfs = data.GetTypeCount(PopType.Serfs);
+                float totalSlaves = data.GetTypeCount(PopType.Slaves) * (1f - data.EconomicData.StateSlaves);
+
+                int desiredWorkforce = (int)(acres / 5f);
+                float desiredSerfs = (int)(desiredWorkforce * 0.8f);
+                float desiredSlaves = (int)(desiredWorkforce * 0.2f);
+
+                var result = new Estate(notable, estateData != null ? estateData : data.EstateData, farmland, pastureland, woodland,
+                    (int)MathF.Min(desiredSerfs, totalSerfs * 0.15f),
+                    (int)MathF.Min(desiredSlaves, totalSlaves * 0.25f));
+
+                result.AddManpower(PopType.Serfs, result.Serfs * 0.05f);
+
+                return result;
+            } catch (Exception e)
             {
                 return null;
             }
-
-            float acreage = data.LandData.Acreage;
-            float acres = MBRandom.RandomFloatRanged(BannerKingsConfig.Instance.EstatesModel.MinimumEstateAcreage, 
-                BannerKingsConfig.Instance.EstatesModel.MaximumEstateAcreagePercentage * acreage);
-            var composition = data.LandData.Composition;
-            float farmland = acres * composition[0];
-            float pastureland = acres * composition[1];
-            float woodland = acres * composition[2];
-
-            float totalSerfs = data.GetTypeCount(PopType.Serfs);
-            float totalSlaves = data.GetTypeCount(PopType.Slaves) * (1f - data.EconomicData.StateSlaves);
-
-            int desiredWorkforce = (int)(acres / 5f);
-            float desiredSerfs = (int)(desiredWorkforce * 0.8f);
-            float desiredSlaves = (int)(desiredWorkforce * 0.2f);
-
-            var result = new Estate(notable, estateData != null ? estateData : data.EstateData, farmland, pastureland, woodland,
-                (int)MathF.Min(desiredSerfs, totalSerfs * 0.15f),
-                (int)MathF.Min(desiredSlaves, totalSlaves * 0.25f));
-
-            result.AddManpower(PopType.Serfs, result.Serfs * 0.05f);
-
-            return result;
         }
 
         [SaveableProperty(1)] public Hero Owner { get; private set; }
@@ -140,6 +149,30 @@ namespace BannerKings.Managers.Populations.Estates
         [SaveableProperty(10)] public EstateDuty Duty { get; private set; }
         [SaveableProperty(11)] public EstateTask Task { get; private set; }
         [SaveableProperty(12)] private Dictionary<PopType, float> Manpowers { get; set; }
+
+        public TroopRoster RaiseManpower(int limit)
+        {
+            if (limit > GetManpower(PopType.Serfs))
+            {
+                limit = GetManpower(PopType.Serfs);
+            }
+
+            TroopRoster roster = TroopRoster.CreateDummyTroopRoster();
+            CultureObject culture = EstatesData.Settlement.Culture;
+            roster.AddToCounts(culture.BasicTroop, (int)(limit / 2f));
+
+            var upgrades = culture.BasicTroop.UpgradeTargets;
+            if (upgrades != null && upgrades.Count() > 0)
+            {
+                for (int i = 0; i < upgrades.Count(); i++)
+                {
+                    int toAdd = (int)(limit * 0.5f / upgrades.Count());
+                    roster.AddToCounts(upgrades[i], toAdd);
+                }
+            }
+
+            return roster;
+        }
 
         public int GetTypeCount(PopType type)
         {
