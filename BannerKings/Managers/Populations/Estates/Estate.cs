@@ -23,8 +23,13 @@ namespace BannerKings.Managers.Populations.Estates
             EstatesData = data;
         }
 
-        public static Estate CreateNotableEstate(Hero notable, PopulationData data)
+        public static Estate CreateNotableEstate(Hero notable, PopulationData data, EstateData estateData= null)
         {
+            if (data == null || data.LandData == null)
+            {
+                return null;
+            }
+
             float acreage = data.LandData.Acreage;
             float acres = MBRandom.RandomFloatRanged(BannerKingsConfig.Instance.EstatesModel.MinimumEstateAcreage, 
                 BannerKingsConfig.Instance.EstatesModel.MaximumEstateAcreagePercentage * acreage);
@@ -40,7 +45,7 @@ namespace BannerKings.Managers.Populations.Estates
             float desiredSerfs = (int)(desiredWorkforce * 0.8f);
             float desiredSlaves = (int)(desiredWorkforce * 0.2f);
 
-            var result = new Estate(notable, data.EstateData, farmland, pastureland, woodland,
+            var result = new Estate(notable, estateData != null ? estateData : data.EstateData, farmland, pastureland, woodland,
                 (int)MathF.Min(desiredSerfs, totalSerfs * 0.15f),
                 (int)MathF.Min(desiredSlaves, totalSlaves * 0.25f));
 

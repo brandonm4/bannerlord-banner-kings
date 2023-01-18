@@ -1,5 +1,5 @@
 using BannerKings.Managers.Skills;
-
+using BannerKings.Utils;
 using HarmonyLib;
 
 using Helpers;
@@ -39,6 +39,8 @@ namespace BannerKings.Behaviours
             try
             {
 
+            ExceptionUtils.TryCatch(() =>
+            {
                 if (participants.Contains(Hero.MainHero.CharacterObject))
                 {
                     var education = BannerKingsConfig.Instance.EducationManager.GetHeroEducation(Hero.MainHero);
@@ -72,14 +74,17 @@ namespace BannerKings.Behaviours
 
                     if (winner == Hero.MainHero.CharacterObject && education.HasPerk(BKPerks.Instance.GladiatorPromisingAthlete))
                     {
-                        var notable = town.Settlement.Notables.GetRandomElement();
-                        ChangeRelationAction.ApplyPlayerRelation(notable, 2);
+                        if (town.Settlement.Notables != null && town.Settlement.Notables.Count > 0)
+                        {
+                            var notable = town.Settlement.Notables.GetRandomElement();
+                            ChangeRelationAction.ApplyPlayerRelation(notable, 2);
+                        }
                     }
                 }
 
                 var data = BannerKingsConfig.Instance.PopulationManager.GetPopData(town.Settlement);
                 var tournament = data.TournamentData;
-                if (town.OwnerClan == Clan.PlayerClan && tournament is { Active: true })
+                if (prize != null && town.OwnerClan == Clan.PlayerClan && tournament is { Active: true })
                 {
                     float price = town.MarketData.GetPrice(prize);
                     var renown = -10f;
@@ -98,8 +103,8 @@ namespace BannerKings.Behaviours
                             town.Name)));
                     tournament.Active = false;
                 }
-            }
-            catch (Exception ex) { }
+            },
+            GetType().Name);
         }
 
     }

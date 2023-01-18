@@ -17,7 +17,7 @@ namespace BannerKings.Managers.Goals.Decisions
         private Town feastPlace;
         private List<Clan> guests;
         private float influenceCost;
-        public OrganizeFeastDecision(Hero fulfiller = null) : base("goal_organize_feast_decision", GoalUpdateType.Manual, fulfiller)
+        public OrganizeFeastDecision(Hero fulfiller = null) : base("goal_organize_feast_decision", GoalCategory.Kingdom, GoalUpdateType.Manual, fulfiller)
         {
             var name = new TextObject("{=RH2NC5ij}Organize Feast");
             var description = new TextObject("{=8XXOBM1L}Organize a feast. Summon lords of the realm to one of your towns or castles, and celebrate with bountiful food. Feasts are an opportunity to improve relations with your Peers. However, some planning is necessary - you don't want your guests out of food or alcohol! Despite all planning, some unfortunate events may occur...\n");
@@ -161,8 +161,12 @@ namespace BannerKings.Managers.Goals.Decisions
         {
             if (guests.Count < 3)
             {
-                InformationManager.DisplayMessage(new InformationMessage(
-                    new TextObject("{=YR4uDhkZ}Too few guests! Invite at least 3 clans for a feast.").ToString()));
+                if (GetFulfiller() == Hero.MainHero)
+                {
+                    InformationManager.DisplayMessage(new InformationMessage(
+                                       new TextObject("{=YR4uDhkZ}Too few guests! Invite at least 3 clans for a feast.").ToString()));
+                }
+               
                 return;
             }
 
