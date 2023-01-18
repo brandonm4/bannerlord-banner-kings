@@ -306,24 +306,24 @@ namespace BannerKings.Managers
             var behavior = Campaign.Current.GetCampaignBehavior<BKGentryBehavior>();
             foreach (var title in BannerKingsConfig.Instance.TitleManager.GetAllDeJure(clan))
             {
-                /*if (title.fief != null && title.fief.IsVillage)
+                if (title.fief != null && title.fief.IsVillage)
                 {
                     PopulationData data = BannerKingsConfig.Instance.PopulationManager.GetPopData(title.fief);
                     if (data != null && data.EstateData != null)
                     {
                         foreach (var estate in data.EstateData.Estates)
                         {
-                            if (estate.Owner != null && estate.Owner.IsLord)
+                            if (estate.Owner != null && estate.Owner.IsLord && estate.Owner.MapFaction == clan.MapFaction)
                             {
                                 (bool, Estate) isGentry = behavior.IsGentryClan(estate.Owner.Clan);
-                                if (isGentry.Item1 && isGentry.Item2 == estate)
+                                if (isGentry.Item1 && isGentry.Item2 == estate && estate.Owner.MapFaction == clan.MapFaction)
                                 {
                                     list.Add(estate.Owner);
                                 }
                             }
                         }
                     }
-                }*/
+                }
 
                 if (title.vassals == null || title.vassals.Count == 0)
                 {
@@ -342,7 +342,7 @@ namespace BannerKings.Managers
                         else
                         {
                             var suzerain = BannerKingsConfig.Instance.TitleManager.CalculateHeroSuzerain(deJure);
-                            if (suzerain != null && suzerain.deJure == clan.Leader)
+                            if (suzerain != null && suzerain.deJure == clan.Leader && clan.MapFaction == vassal.deJure.MapFaction)
                             {
                                 list.Add(deJure);
                             }

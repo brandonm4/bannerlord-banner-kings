@@ -56,7 +56,7 @@ namespace BannerKings.Managers.Goals.Decisions
 
             if (GetFulfiller().Clan.Fiefs.Count == 0)
             {
-                failedReasons.Add(new TextObject("{=!}No adequate fief to make a feast"));
+                failedReasons.Add(new TextObject("{=MeYrOaFb}No adequate fief to make a feast"));
             }
 
             /*
@@ -194,12 +194,9 @@ namespace BannerKings.Managers.Goals.Decisions
             }
 
             var behavior = Campaign.Current.GetCampaignBehavior<BKFeastBehavior>();
-            foreach (var fief in fulfiller.Clan.Kingdom.Fiefs)
+            if (behavior.KingdomHasFeast(fulfiller.Clan.Kingdom))
             {
-                if (behavior.IsFeastTown(fief.Settlement))
-                {
-                    return;
-                }
+                return;
             }
 
             var guests = new List<Clan>();
